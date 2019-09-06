@@ -9,11 +9,17 @@ cache:
     - $HOME/.m2
     - $HOME/.sonar/cache
 
+services:
+  - docker
+
 install:
   skip
 
 script:
-  - mvn clean install sonar:sonar -Dsonar.projectKey=piggy1-mvn_piggyback-invoice -Dsonar.organization=piggyback -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN -Djib.to.auth.username=$DOCKER_USERNAME -Djib.to.auth.password=$DOCKER_PASSWORD
+  - mvn clean install sonar:sonar -Dsonar.projectKey=piggy1-mvn_piggyback-invoice -Dsonar.organization=piggyback -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t piggy1/user .
+  - docker push piggy1/user
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
