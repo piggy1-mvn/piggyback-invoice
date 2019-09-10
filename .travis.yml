@@ -17,10 +17,10 @@ install:
 
 addons:
   sonarcloud:
-    organization: "piggybackincentives-1"
+    organization: "piggyback"
 
 script:
-  - mvn clean verify sonar:sonar -Dsonar.projectKey=piggybackIncentives_piggyback-invoice
+  - mvn clean verify sonar:sonar -Dsonar.projectKey=piggy1-mvn_piggyback-invoice
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker build -t piggy1/invoice .
   - docker push piggy1/invoice
