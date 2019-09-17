@@ -1,4 +1,4 @@
-package com.incentives.piggyback.invoice.util.advice;
+package com.incentives.piggyback.invoice.util;
 
 import com.incentives.piggyback.invoice.exception.InvoiceNotFoundException;
 import org.springframework.http.HttpStatus;
