@@ -20,20 +20,14 @@ public class InvoiceController {
 
     @PutMapping("/invoice/{id}")
     public ResponseEntity<Invoice> payInvoice(@PathVariable Long id, @Valid @RequestBody Invoice invoice) {
-        log.debug("Invoice Service: Received PUT request for updating invoice with partnerId."+ id);
-        return invoiceService.payInvoiceById(id,invoice);
+        log.debug("Invoice Service: Received PUT request for updating invoice with partnerId." + id);
+        return invoiceService.payInvoiceById(id, invoice);
     }
 
     @GetMapping("/invoice/{id}")
     public ResponseEntity<Invoice> getInvoice(@PathVariable Long id) {
-        log.debug("Invoice Service: Received GET request for getting Invoice with partnerId."+ id);
+        log.debug("Invoice Service: Received GET request for getting Invoice with partnerId." + id);
         return invoiceService.getInvoiceById(id);
-    }
-
-    @RequestMapping("/invoice/generate")
-    public void getInvoice() {
-        log.debug("Invoice Service: Received GET request for getting Invoice with partnerId.");
-        invoiceService.generateInvoice();
     }
 
 
