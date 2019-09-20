@@ -30,5 +30,11 @@ public class InvoiceController {
         return invoiceService.getInvoiceById(id);
     }
 
+    @RequestMapping("/invoice/generate")
+    public void getInvoice() {
+        log.debug("Invoice Service: Received GET request for getting Invoice with partnerId.");
+        invoiceService.generateInvoice();
+    }
+
 
 }
