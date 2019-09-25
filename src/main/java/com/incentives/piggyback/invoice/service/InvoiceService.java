@@ -14,4 +14,5 @@ public interface InvoiceService {
 
 	String emailInvoice(InvoiceRequest invoiceRequest);
 
+	void generateInvoice();
 }
