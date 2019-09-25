@@ -1,33 +1,38 @@
-language:
-  java
+language: java
 
-sudo:
-  false
+sudo: false
 
 cache:
   directories:
-    - $HOME/.m2
-    - $HOME/.sonar/cache
+  - "$HOME/.m2"
+  - "$HOME/.sonar/cache"
 
 services:
-  - docker
+- docker
 
-install:
-  skip
+before_install:
+  - openssl aes-256-cbc -k "$DECRYPT_KEY" -in secret-storage.json.enc -out secret-storage.json -d -md sha256
+
+install: skip
 
 addons:
   sonarcloud:
-    organization: "piggyback"
+    organization: piggyback
 
 script:
-  - mvn clean verify sonar:sonar -Dsonar.projectKey=piggy1-mvn_piggyback-invoice
-  - docker build -t piggy1/invoice .
-
-deploy:
-  provider: script
-  script: bash docker_push
-  on:
-    branch: master
+- mvn clean verify sonar:sonar -Dsonar.projectKey=piggy1-mvn_piggyback-invoice
+- docker build -t piggy1/invoice .
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- docker push piggy1/invoice
+- mvn -Pprod clean verify
+- docker build -t invoice-prod .
+- if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_EVENT_TYPE == "push" ]; then docker tag invoice-prod gcr.io/absolute-text-251105/piggy1-invoice:v1; fi
+- if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_EVENT_TYPE == "push" ]; then cat secret-storage.json | docker login -u _json_key --password-stdin https://gcr.io; fi
+- if [ $TRAVIS_BRANCH == "master" ] && [ $TRAVIS_EVENT_TYPE == "push" ]; then docker push gcr.io/absolute-text-251105/piggy1-invoice:v1; fi
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
+
+env:
+  global:
+    secure: vBj7BGJEFMmyoImzCxs3/Bomifq1At2spdvwilKV5fhPYua2Dgb9XdLHPHl41C8PfWtJh5IxDTVd6KC3WkxNHd04r6k+FzjGTIfVxUGQ0Zevqihjk83Y8HQTzWb49UDawvWlAPMi63g2Lv5cgD8KIdj9uMj3Z0DS5WGbvhV15T1zUyCqaeakCd1Jg5WRTGgoe44lcLbAs9HGeQCSP/jumdgk/avjSNl5Vir3iokqO0q0nqNfXS7DMLWm3NOmndlU5lqRtdrCYvwvnCjxqG3GmmwaT1Wiq5HgZTPeHcz16S7I1GUr8T258lekR5Cwpb3+kH70ej4muwF4Gsj+F22IwR7AqfFrmWW0kAGt8jODiaes7f2h+kij1gylCJL62kt6eRgtjpvUa/bvgIeU6WIc3T6npiC9W6Xcf5itG4cJruV5iTYg4lNG2QvGF4HwsCiIWWH9kSrnlJklERG4qSkcJxQmRP3z80ihJCkZsYcc8WrI22rgcnpREwfbpjnVvHoOEpfVSWj0XqGHxWnH/MGGohagUgozu5K3myrsUSvAsAnXMXMd9T30liWYDRKgQiob28fa7IjzB2h3XjR+PQFzz/eNB/pABLKjUIqhtrQ02mkF6+nkbBt83BD/yPPgbRYQ3F7KBKKCpY5gsaVQbjSXXvHGC3/h9e8XRvg4Tw8LoWE=
