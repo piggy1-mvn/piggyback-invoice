@@ -20,8 +20,8 @@ public class Invoice {
         private Long invoice_id;
 
         @NotNull(message = "partnerId is mandatory")
-        @Column(name="partnerId")
-        private Long partnerId;
+        @Column(name="partnerId",length = 700)
+        private String partnerId;
 
         @Column(name="lineItem")
         private String lineItem;
