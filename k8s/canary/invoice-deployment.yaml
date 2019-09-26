@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: piggyback-invoice-canary
+  namespace: production
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 10
+  template:
+    metadata:
+      labels:
+        app: piggyback-invoice
+        env: canary
+    spec:
+      containers:
+      - image: gcr.io/absolute-text-251105/piggy1-invoice:v2
+        name: piggyback-prod-runner-invoice
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        imagePullPolicy: Always
+        ports:
+        - name: piggy-invoice
+          containerPort: 8084
+        readinessProbe:
+          httpGet:
+            path: /swagger-ui.html
+            port: 8084
+status: {}
