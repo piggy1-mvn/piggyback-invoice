@@ -21,10 +21,10 @@ spec:
             cpu: "200m"
         imagePullPolicy: Always
         ports:
-        - name: piggy-evens
-          containerPort: 8082
+        - name: piggy-invoice
+          containerPort: 8084
         readinessProbe:
           httpGet:
             path: /swagger-ui.html
-            port: 8082
+            port: 8084
 status: {}
