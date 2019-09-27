@@ -1,7 +1,6 @@
 package com.incentives.piggyback.invoice.serviceImpl;
 
 import com.incentives.piggyback.invoice.model.*;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +48,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public ResponseEntity<Invoice> getInvoiceById(Long id) {
         return ResponseEntity.ok(invoiceServiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException(id)));
+    }
+
+    public Iterable<Invoice> getAllInvoice() {
+        return invoiceServiceRepository.findAll();
     }
 
     @Override
@@ -136,6 +139,5 @@ public class InvoiceServiceImpl implements InvoiceService {
         Date dueDate = c.getTime();
         return dueDate;
     }
-
 
 }
