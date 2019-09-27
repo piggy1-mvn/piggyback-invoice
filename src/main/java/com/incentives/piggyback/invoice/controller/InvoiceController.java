@@ -24,6 +24,12 @@ public class InvoiceController {
         return invoiceService.payInvoiceById(id, invoice);
     }
 
+    @GetMapping("/invoice/")
+    public Iterable<Invoice> getAllInvoice() {
+        log.debug("Invoice Service: Received GET request for getting all Invoice");
+        return invoiceService.getAllInvoice();
+    }
+
     @GetMapping("/invoice/{id}")
     public ResponseEntity<Invoice> getInvoice(@PathVariable Long id) {
         log.debug("Invoice Service: Received GET request for getting Invoice with partnerId." + id);

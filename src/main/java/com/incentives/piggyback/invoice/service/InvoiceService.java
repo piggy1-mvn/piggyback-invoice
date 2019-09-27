@@ -10,6 +10,8 @@ public interface InvoiceService {
 
 	ResponseEntity<Invoice> getInvoiceById(Long id);
 
+	Iterable<Invoice> getAllInvoice();
+
 	ResponseEntity<Invoice> payInvoiceById(Long id, Invoice invoice);
 
 	String emailInvoice(InvoiceRequest invoiceRequest);

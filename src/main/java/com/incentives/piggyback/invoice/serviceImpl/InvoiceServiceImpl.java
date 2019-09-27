@@ -50,6 +50,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         return ResponseEntity.ok(invoiceServiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException(id)));
     }
 
+    public Iterable<Invoice> getAllInvoice() {
+        return invoiceServiceRepository.findAll();
+    }
+
     @Override
     public ResponseEntity<Invoice> payInvoiceById(Long id, Invoice invoice) {
         invoiceServiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException(id));
