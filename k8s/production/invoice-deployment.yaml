@@ -13,7 +13,7 @@ spec:
         env: canary
     spec:
       containers:
-      - image: gcr.io/absolute-text-251105/piggy1-invoice:v4
+      - image: gcr.io/absolute-text-251105/piggy1-invoice:v5
         name: piggyback-prod-runner-invoice
         resources:
           limits:

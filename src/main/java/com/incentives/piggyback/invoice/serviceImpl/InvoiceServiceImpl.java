@@ -83,13 +83,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     public void generateInvoice() {
 
         double partnerBillAmount = 0.0;
-        log.debug("Started generating Invoice for partners");
+        log.debug("Invoice Service:Started generating Invoice for partners");
         String url = env.getProperty("partner.api.invoice");
         assert url != null;
         ResponseEntity<PartnerResponse[]> response =
                 restTemplate.getForEntity(url, PartnerResponse[].class);
         if (CommonUtility.isNullObject(response.getBody())) {
-            log.error("email send failed with body {}", response.getBody());
+            log.error("Invoice Service: No active Partner Id available", response.getBody());
         }
 
         List<String> activePartnerIds = new ArrayList<String>();
@@ -126,7 +126,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         ResponseEntity<EventResponse[]> eventResponse =
                 restTemplate.getForEntity(eventUrl, EventResponse[].class);
         if (CommonUtility.isNullObject(eventResponse.getBody())) {
-            log.error("email send failed with body {}", eventResponse.getBody());
+            log.error("Invoice Service: No events for Partner Id available", eventResponse.getBody());
         }
         return eventResponse.getBody().length;
     }
