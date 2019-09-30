@@ -133,7 +133,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(eventUrl)
                 .queryParam("eventType",eventType)
                 .queryParam("partnerId",partnerId)
-                .queryParam("timestamp",timestamp);
+                .queryParam("timestamp",timestamp.getTime());
         HttpEntity<?> entity = new HttpEntity<>(headers);
         ResponseEntity<List<EventResponse>> eventResponse =
                 restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
