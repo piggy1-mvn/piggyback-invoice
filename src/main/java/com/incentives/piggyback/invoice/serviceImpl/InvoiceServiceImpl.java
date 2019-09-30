@@ -4,6 +4,7 @@ import com.incentives.piggyback.invoice.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ import com.incentives.piggyback.invoice.exception.InvoiceNotFoundException;
 import com.incentives.piggyback.invoice.repository.InvoiceServiceRepository;
 import com.incentives.piggyback.invoice.service.InvoiceService;
 import com.incentives.piggyback.invoice.util.CommonUtility;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -100,10 +102,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         for (String partnerId : activePartnerIds) {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             Date todaysDate = new Date();
-            int offerCreatedEventCount = getTotalEventsForPartnerId(OFFER_CREATED_EVENT, partnerId, df.format(todaysDate));
-            int orderOptimizedEventCount = getTotalEventsForPartnerId(ORDER_OPTIMIZED_EVENT, partnerId, df.format(todaysDate));
+            int offerCreatedEventCount = getTotalEventsForPartnerId(OFFER_CREATED_EVENT, partnerId, todaysDate);
+            int orderOptimizedEventCount = getTotalEventsForPartnerId(ORDER_OPTIMIZED_EVENT, partnerId, todaysDate);
             partnerBillAmount = (offerCreatedEventCount * RATE_PER_OFFER_CREATED) + (orderOptimizedEventCount * RATE_PER_ORDER_OPTIMIZED);
             saveInvoice(partnerBillAmount, partnerId);
         }
@@ -120,15 +122,22 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceServiceRepository.save(invoice);
     }
 
-    private int getTotalEventsForPartnerId(String eventType, String partnerId, String timestamp) {
-        String eventUrl = env.getProperty("event.api.invoice") + "?eventType=" + eventType + "&partnerId=" +
-                partnerId + "&timeStamp=" + timestamp;
-        ResponseEntity<EventResponse[]> eventResponse =
-                restTemplate.getForEntity(eventUrl, EventResponse[].class);
+    private int getTotalEventsForPartnerId(String eventType, String partnerId, Date timestamp) {
+        String eventUrl = env.getProperty("event.api.invoice");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(eventUrl)
+                .queryParam("eventType",eventType)
+                .queryParam("partnerId",partnerId)
+                .queryParam("timestamp",timestamp);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+        ResponseEntity<List<EventResponse>> eventResponse =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
+                        entity, new ParameterizedTypeReference<List<EventResponse>>(){});
         if (CommonUtility.isNullObject(eventResponse.getBody())) {
             log.error("Invoice Service: No events for Partner Id available", eventResponse.getBody());
         }
-        return eventResponse.getBody().length;
+        return eventResponse.getBody().size();
     }
 
     private Date getDueDate() {
