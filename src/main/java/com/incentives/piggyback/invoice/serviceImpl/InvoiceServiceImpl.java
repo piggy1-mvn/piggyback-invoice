@@ -137,8 +137,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 		headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(eventUrl)
 				.queryParam("eventType",eventType)
-				.queryParam("partnerId",partnerId)
-				.queryParam("timestamp",timestamp.getTime());
+				.queryParam("partnerId",partnerId);
 		HttpEntity<?> entity = new HttpEntity<>(headers);
 		ResponseEntity<EventResponse> eventResponse =
 				restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
