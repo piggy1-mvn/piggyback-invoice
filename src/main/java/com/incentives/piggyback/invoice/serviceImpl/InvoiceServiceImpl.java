@@ -84,8 +84,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void generateInvoice() {
 
-        double partnerBillAmount = 0.0;
-        log.debug("Invoice Service:Started generating Invoice for partners");
+        int partnerBillAmount = 0;
+        log.info("Invoice Service:Started generating Invoice for partners");
         String url = env.getProperty("partner.api.invoice");
         assert url != null;
         ResponseEntity<PartnerResponse[]> response =
@@ -108,11 +108,13 @@ public class InvoiceServiceImpl implements InvoiceService {
             int orderOptimizedEventCount = getTotalEventsForPartnerId(ORDER_OPTIMIZED_EVENT, partnerId, todaysDate);
             partnerBillAmount = (offerCreatedEventCount * RATE_PER_OFFER_CREATED) + (orderOptimizedEventCount * RATE_PER_ORDER_OPTIMIZED);
             saveInvoice(partnerBillAmount, partnerId);
+            log.info("partnerBillAmount generated value" + partnerBillAmount);
         }
 
     }
 
-    private void saveInvoice(double partnerBillAmount, String partnerId) {
+    private void saveInvoice(int partnerBillAmount, String partnerId) {
+        log.info("partnerBillAmount started saving" + partnerBillAmount);
         Invoice invoice = new Invoice();
         invoice.setAmount(partnerBillAmount);
         invoice.setPartnerId(partnerId);
@@ -120,9 +122,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setStatus(PENDING.toString());
         invoice.setDue_Date(getDueDate());
         invoiceServiceRepository.save(invoice);
+        log.info("partnerBillAmount saved" + partnerBillAmount);
     }
 
     private int getTotalEventsForPartnerId(String eventType, String partnerId, Date timestamp) {
+        log.info("getTotalEventsForPartnerId for partner Id" + partnerId);
         String eventUrl = env.getProperty("event.api.invoice");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -137,6 +141,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (CommonUtility.isNullObject(eventResponse.getBody())) {
             log.error("Invoice Service: No events for Partner Id available", eventResponse.getBody());
         }
+        log.info("getTotalEventsForPartnerId sent total Partner count" + eventResponse.getBody().size());
         return eventResponse.getBody().size();
     }
 

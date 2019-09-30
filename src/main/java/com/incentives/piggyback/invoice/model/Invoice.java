@@ -27,7 +27,7 @@ public class Invoice {
         private String lineItem;
 
         @Column(name="amount")
-        private double amount;
+        private int amount;
 
         @NotNull
         @Column(name="due_Date")
