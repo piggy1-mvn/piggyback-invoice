@@ -139,6 +139,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 				.queryParam("eventType",eventType)
 				.queryParam("partnerId",partnerId);
 		HttpEntity<?> entity = new HttpEntity<>(headers);
+		log.info("getTotalEventsForPartnerId sent total Partner uri {}",builder.toUriString());
 		ResponseEntity<EventResponse> eventResponse =
 				restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
 						entity, EventResponse.class);
