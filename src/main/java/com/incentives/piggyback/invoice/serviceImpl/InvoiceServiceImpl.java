@@ -105,14 +105,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 				activePartnerIds.add(partnerResponse.getPartnerId());
 			}
 		}
-
 		for (String partnerId : activePartnerIds) {
-			//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-			Date todaysDate = new Date();
-			int offerCreatedEventCount = getTotalEventsForPartnerId(OFFER_CREATED_EVENT, partnerId, todaysDate);
-			int orderOptimizedEventCount = getTotalEventsForPartnerId(ORDER_OPTIMIZED_EVENT, partnerId, todaysDate);
+			int offerCreatedEventCount = getTotalEventsForPartnerId(OFFER_CREATED_EVENT, partnerId);
+			int orderOptimizedEventCount = getTotalEventsForPartnerId(ORDER_OPTIMIZED_EVENT, partnerId);
 			partnerBillAmount = (offerCreatedEventCount * RATE_PER_OFFER_CREATED) + (orderOptimizedEventCount * RATE_PER_ORDER_OPTIMIZED);
-			saveInvoice(partnerBillAmount, partnerId);
+			log.info("Calculated bill amount is {}",partnerBillAmount);
+			if (partnerBillAmount != 0) {
+				saveInvoice(partnerBillAmount, partnerId);
+			}
 			log.info("partnerBillAmount generated value" + partnerBillAmount);
 		}
 
@@ -130,18 +130,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 		log.info("partnerBillAmount saved" + partnerBillAmount);
 	}
 
-	private int getTotalEventsForPartnerId(String eventType, String partnerId, Date timestamp) {
+	private int getTotalEventsForPartnerId(String eventType, String partnerId) {
 		log.info("getTotalEventsForPartnerId for partner Id" + partnerId);
 		String eventUrl = env.getProperty("event.api.invoice");
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(eventUrl)
-				.queryParam("eventType",eventType)
 				.queryParam("partnerId",partnerId);
 		HttpEntity<?> entity = new HttpEntity<>(headers);
 		log.info("getTotalEventsForPartnerId sent total Partner uri {}",builder.toUriString());
 		ResponseEntity<EventResponse> eventResponse =
-				restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
+				restTemplate.exchange(builder.toUriString()+"&eventType="+eventType, HttpMethod.GET,
 						entity, EventResponse.class);
 		if (CommonUtility.isNullObject(eventResponse.getBody())) {
 			log.error("Invoice Service: No events for Partner Id available", eventResponse.getBody());
