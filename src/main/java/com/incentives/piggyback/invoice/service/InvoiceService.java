@@ -5,12 +5,14 @@ import com.incentives.piggyback.invoice.model.InvoiceRequest;
 
 import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 public interface InvoiceService {
 
 	ResponseEntity<Invoice> getInvoiceById(Long id);
 
-	Iterable<Invoice> getAllInvoice();
+	Iterable<Invoice> getAllInvoice(HttpServletRequest request);
 
 	ResponseEntity<Invoice> payInvoiceById(Long id, Invoice invoice);
 

@@ -37,6 +37,8 @@ import com.incentives.piggyback.invoice.repository.InvoiceServiceRepository;
 import com.incentives.piggyback.invoice.service.InvoiceService;
 import com.incentives.piggyback.invoice.util.CommonUtility;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Component
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -57,8 +59,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 		return ResponseEntity.ok(invoiceServiceRepository.findById(id).orElseThrow(() -> new InvoiceNotFoundException(id)));
 	}
 
-	public Iterable<Invoice> getAllInvoice() {
-		return invoiceServiceRepository.findAll();
+	public Iterable<Invoice> getAllInvoice(HttpServletRequest request) {
+		if(null!=request && null != request.getHeader("Authorization")){
+			if(isAuthorized(request.getHeader("Authorization"))){
+				return invoiceServiceRepository.findAll();
+			}
+		}else{
+			throw new InvoiceNotFoundException("InvoiceService: User not Authorized to access invoice");
+		}
+		throw new InvoiceNotFoundException("Invoice Service:Authorization header is empty");
 	}
 
 	@Override
@@ -156,6 +165,26 @@ public class InvoiceServiceImpl implements InvoiceService {
 		c.add(Calendar.MONTH, 1);
 		Date dueDate = c.getTime();
 		return dueDate;
+	}
+
+	private boolean isAuthorized(String accessToken) {
+		log.info("Partner Service: User token validation from user service");
+		String url = env.getProperty("users.api.userValid");
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+		headers.set("Authorization", accessToken);
+		HttpEntity<?> entity = new HttpEntity<>(headers);
+		ResponseEntity<Integer> response =
+				restTemplate.exchange(url, HttpMethod.HEAD,
+						entity,Integer.class);
+		if (CommonUtility.isNullObject(response.getStatusCode())){
+			throw new InvoiceNotFoundException("User not authorized to create partner");
+		}else if(response.getStatusCodeValue()==200){
+			return true;
+		}
+		else
+			return false;
+
 	}
 
 }

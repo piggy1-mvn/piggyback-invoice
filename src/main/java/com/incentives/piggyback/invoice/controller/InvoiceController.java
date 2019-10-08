@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Slf4j
@@ -25,9 +26,9 @@ public class InvoiceController {
     }
 
     @GetMapping("/invoice/")
-    public Iterable<Invoice> getAllInvoice() {
+    public Iterable<Invoice> getAllInvoice(HttpServletRequest request) {
         log.debug("Invoice Service: Received GET request for getting all Invoice");
-        return invoiceService.getAllInvoice();
+        return invoiceService.getAllInvoice(request);
     }
 
     @GetMapping("/invoice/{id}")
