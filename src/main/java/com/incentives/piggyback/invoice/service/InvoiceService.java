@@ -19,4 +19,6 @@ public interface InvoiceService {
 	String emailInvoice(InvoiceRequest invoiceRequest);
 
 	void generateInvoice();
+
+	Iterable<Invoice> getOrderByPartnerId(String partnerId);
 }

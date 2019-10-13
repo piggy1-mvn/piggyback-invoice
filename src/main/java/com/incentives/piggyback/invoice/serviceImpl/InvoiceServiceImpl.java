@@ -127,6 +127,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 	}
 
+	@Override
+	public Iterable<Invoice> getOrderByPartnerId(String partnerId) {
+		log.info("Invoice Service: Started getting invoice by invoice Id");
+		return invoiceServiceRepository.findByPartnerId(partnerId);
+	}
+
 	private void saveInvoice(int partnerBillAmount, String partnerId) {
 		log.info("partnerBillAmount started saving" + partnerBillAmount);
 		Invoice invoice = new Invoice();

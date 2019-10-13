@@ -37,4 +37,9 @@ public class InvoiceController {
         return invoiceService.getInvoiceById(id);
     }
 
+    @GetMapping("/invoice/partnerId")
+    public ResponseEntity<Iterable<Invoice>> getInvoiceByPartnerId(@RequestParam("partnerId") String partnerId) {
+        return ResponseEntity.ok(invoiceService.getOrderByPartnerId(partnerId));
+    }
+
 }
