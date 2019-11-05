@@ -1,7 +1,7 @@
 KEY_FILE:= kub-deploy.json
 PROJECT_ID:=omega-palace-254907
-K8s_CLUSTER:=piggy-prod-jenkins
-ZONE:=asia-southeast1-a
+K8s_CLUSTER:=piggy-cluster
+ZONE:=asia-southeast1-b
 
 IMAGE_NAME:=gcr.io/omega-palace-254907/piggy1-invoice
 IMAGE_VERSION:=v7
