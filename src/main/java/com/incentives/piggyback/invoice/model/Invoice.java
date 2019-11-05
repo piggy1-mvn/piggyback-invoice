@@ -17,7 +17,7 @@ public class Invoice {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name="invoice_id")
-        private Long invoice_id;
+                private Long invoice_id;
 
         @NotNull(message = "partnerId is mandatory")
         @Column(name="partnerId",length = 700)
