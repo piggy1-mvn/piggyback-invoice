@@ -4,7 +4,7 @@ metadata:
   name: piggyback-invoice-canary
   namespace: production
 spec:
-  replicas: 1
+  replicas: 0
   progressDeadlineSeconds: 10
   template:
     metadata:
@@ -13,7 +13,7 @@ spec:
         env: canary
     spec:
       containers:
-      - image: gcr.io/omega-palace-254907/piggy1-invoice:v7
+      - image: gcr.io/omega-palace-254907/piggy1-invoice:v8
         name: piggyback-prod-runner-invoice
         env:
           - name: JASYPT_ENCRYPTOR_PASSWORD
