@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Slf4j
@@ -25,15 +26,20 @@ public class InvoiceController {
     }
 
     @GetMapping("/invoice/")
-    public Iterable<Invoice> getAllInvoice() {
+    public Iterable<Invoice> getAllInvoice(HttpServletRequest request) {
         log.debug("Invoice Service: Received GET request for getting all Invoice");
-        return invoiceService.getAllInvoice();
+        return invoiceService.getAllInvoice(request);
     }
 
     @GetMapping("/invoice/{id}")
     public ResponseEntity<Invoice> getInvoice(@PathVariable Long id) {
         log.debug("Invoice Service: Received GET request for getting Invoice with partnerId." + id);
         return invoiceService.getInvoiceById(id);
+    }
+
+    @GetMapping("/invoice/partnerId")
+    public ResponseEntity<Iterable<Invoice>> getInvoiceByPartnerId(@RequestParam("partnerId") String partnerId) {
+        return ResponseEntity.ok(invoiceService.getOrderByPartnerId(partnerId));
     }
 
 }

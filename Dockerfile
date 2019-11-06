@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:12-alpine
 VOLUME /tmp
 ARG DEPENDENCY=target/dependency
 COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
