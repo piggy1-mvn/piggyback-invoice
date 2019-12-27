@@ -2,7 +2,6 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: piggyback-invoice-production
-  namespace: production
 spec:
   replicas: 1
   progressDeadlineSeconds: 10
@@ -10,7 +9,6 @@ spec:
     metadata:
       labels:
         app: piggyback-invoice
-        env: canary
     spec:
       containers:
       - image: gcr.io/omega-palace-254907/piggy1-invoice:v8
